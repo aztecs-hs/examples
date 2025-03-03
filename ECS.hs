@@ -22,17 +22,16 @@ newtype Velocity = Velocity Int deriving (Show, Generic, NFData)
 
 instance Component Velocity
 
+move :: (ArrowQuery m q) => q () Position
+move = proc () -> do
+  Velocity v <- Q.fetch -< ()
+  Position p <- Q.fetch -< ()
+  Q.set -< Position $ p + v
+
 run :: (ArrowQuery m q, MonadSystem q s, MonadIO s) => s ()
 run = do
-  ps <-
-    S.map
-      ()
-      ( proc () -> do
-          Velocity v <- Q.fetch -< ()
-          Position p <- Q.fetch -< ()
-          Q.set -< Position $ p + v
-      )
-  liftIO $ print ps
+  positions <- S.map () move
+  liftIO $ print positions
   run
 
 app :: AccessT IO ()
