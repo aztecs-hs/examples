@@ -8,9 +8,11 @@ import Aztecs
 import qualified Aztecs.ECS.Access as A
 import qualified Aztecs.ECS.Query as Q
 import qualified Aztecs.ECS.System as S
-import Control.Arrow ((>>>))
+import qualified Aztecs.ECS.World as W
 import Control.DeepSeq
-import GHC.Generics (Generic)
+import Control.Monad
+import Control.Monad.IO.Class
+import GHC.Generics
 
 newtype Position = Position Int deriving (Show, Generic, NFData)
 
@@ -20,20 +22,23 @@ newtype Velocity = Velocity Int deriving (Show, Generic, NFData)
 
 instance Component Velocity
 
-setup :: (ArrowQueueSystem b m arr) => arr () ()
-setup = S.queue . const . A.spawn_ $ bundle (Position 0) <> bundle (Velocity 1)
+run :: (ArrowQuery m q, MonadSystem q s, MonadIO s) => s ()
+run = do
+  ps <-
+    S.map
+      ()
+      ( proc () -> do
+          Velocity v <- Q.fetch -< ()
+          Position p <- Q.fetch -< ()
+          Q.set -< Position $ p + v
+      )
+  liftIO $ print ps
+  run
 
-move :: (ArrowQuery q, ArrowSystem q arr) => arr () [Position]
-move =
-  S.map
-    ( proc () -> do
-        Velocity v <- Q.fetch -< ()
-        Position p <- Q.fetch -< ()
-        Q.set -< Position $ p + v
-    )
-
-app :: Schedule IO () ()
-app = system setup >>> forever (system move) print
+app :: AccessT IO ()
+app = do
+  A.spawn_ $ bundle (Position 0) <> bundle (Velocity 1)
+  run
 
 main :: IO ()
-main = runSchedule_ app
+main = void $ runAccessT app W.empty
