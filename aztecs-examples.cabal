@@ -12,7 +12,7 @@ executable ecs
     ghc-options:      -Wall
     build-depends:
         base,
-        aztecs >=0.8 && <0.9,
+        aztecs >=0.9 && <0.10,
         deepseq >=1
 
 executable keyboard
@@ -21,8 +21,8 @@ executable keyboard
     ghc-options:      -Wall
     build-depends:
         base,
-        aztecs >=0.8 && <0.9,
-        aztecs-sdl >=0.5 && <0.6,
+        aztecs >=0.9 && <0.10,
+        aztecs-sdl >=0.6 && <0.7,
         sdl2
 
 executable mouse
@@ -31,8 +31,8 @@ executable mouse
     ghc-options:      -Wall
     build-depends:
         base,
-        aztecs >=0.8 && <0.9,
-        aztecs-sdl >=0.5 && <0.6,
+        aztecs >=0.9 && <0.10,
+        aztecs-sdl >=0.6 && <0.7,
         sdl2
 
 executable window
@@ -41,8 +41,8 @@ executable window
     ghc-options:      -Wall
     build-depends:
         base,
-        aztecs >=0.8 && <0.9,
-        aztecs-sdl >=0.5 && <0.6,
+        aztecs >=0.9 && <0.10,
+        aztecs-sdl >=0.6 && <0.7,
         sdl2
 
 executable image
@@ -51,9 +51,9 @@ executable image
     ghc-options:      -Wall
     build-depends:
         base,
-        aztecs >=0.8 && <0.9,
-        aztecs-sdl >=0.5 && <0.6,
-        aztecs-sdl-image >=0.5 && <0.6,
+        aztecs >=0.9 && <0.10,
+        aztecs-sdl >=0.6 && <0.7,
+        aztecs-sdl-image >=0.6 && <0.7,
         sdl2
 
 executable sprite
@@ -62,9 +62,9 @@ executable sprite
     ghc-options:      -Wall
     build-depends:
         base,
-        aztecs >=0.8 && <0.9,
-        aztecs-sdl >=0.5 && <0.6,
-        aztecs-sdl-image >=0.5 && <0.6,
+        aztecs >=0.9 && <0.10,
+        aztecs-sdl >=0.6 && <0.7,
+        aztecs-sdl-image >=0.6 && <0.7,
         sdl2
 
 executable text
@@ -73,7 +73,7 @@ executable text
     ghc-options:      -Wall
     build-depends:
         base,
-        aztecs >=0.8 && <0.9,
-        aztecs-sdl >=0.5 && <0.6,
-        aztecs-sdl-text >=0.5 && <0.6,
+        aztecs >=0.9 && <0.10,
+        aztecs-sdl >=0.6 && <0.7,
+        aztecs-sdl-text >=0.6 && <0.7,
         sdl2

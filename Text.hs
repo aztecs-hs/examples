@@ -4,7 +4,6 @@ module Main where
 
 import Aztecs
 import qualified Aztecs.ECS.Access as A
-import qualified Aztecs.ECS.World as W
 import qualified Aztecs.SDL as SDL
 import Aztecs.SDL.Text (Text (..))
 import qualified Aztecs.SDL.Text as T
@@ -35,7 +34,7 @@ app = do
   SDL.setup
   T.setup
   setup
-  run
+  forever run
 
 main :: IO ()
-main = void $ runAccessT app W.empty
+main = runAccessT_ app

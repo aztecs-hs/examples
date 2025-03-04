@@ -2,7 +2,6 @@ module Main where
 
 import Aztecs
 import qualified Aztecs.ECS.Access as A
-import qualified Aztecs.ECS.World as W
 import qualified Aztecs.SDL as SDL
 import Aztecs.SDL.Image (Sprite (..), spriteAnimationGrid)
 import qualified Aztecs.SDL.Image as IMG
@@ -31,14 +30,13 @@ run = do
   SDL.update
   join IMG.draw
   SDL.draw
-  run
 
 app :: AccessT IO ()
 app = do
   SDL.setup
   IMG.setup
   setup
-  run
+  forever run
 
 main :: IO ()
-main = void $ runAccessT app W.empty
+main = runAccessT_ app

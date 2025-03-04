@@ -6,7 +6,6 @@ import Aztecs
 import qualified Aztecs.ECS.Access as A
 import qualified Aztecs.ECS.Query as Q
 import qualified Aztecs.ECS.System as S
-import qualified Aztecs.ECS.World as W
 import qualified Aztecs.SDL as SDL
 import Control.Monad
 import Control.Monad.IO.Class
@@ -20,7 +19,7 @@ run :: AccessT IO ()
 run = do
   SDL.setup
   A.spawn_ $ bundle Window {windowTitle = "Aztecs"}
-  update
+  forever update
 
 main :: IO ()
-main = void $ runAccessT run W.empty
+main = runAccessT_ run
