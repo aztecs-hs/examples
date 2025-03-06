@@ -13,7 +13,7 @@ import Control.Monad.IO.Class
 
 input :: AccessT IO ()
 input = do
-  kb <- S.single () (Q.fetch @_ @KeyboardInput)
+  kb <- S.single $ Q.fetch @_ @KeyboardInput
   liftIO $ do
     when (wasKeyPressed KeyW kb) $ print "Onwards!"
     when (wasKeyPressed KeyS kb) $ print "Retreat..."
