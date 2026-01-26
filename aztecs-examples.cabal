@@ -12,7 +12,7 @@ executable 2D
     ghc-options:      -Wall
     build-depends:
         base,
-        aztecs >=0.17 && <0.18,
+        aztecs >=0.17.1 && <0.18,
         aztecs-gl >=0.1 && <0.2,
         aztecs-glfw >=0.2 && <0.3
 
@@ -46,7 +46,7 @@ executable pong
     ghc-options:      -Wall
     build-depends:
         base,
-        aztecs >=0.17 && <0.18,
+        aztecs >=0.17.1 && <0.18,
         aztecs-gl >=0.1 && <0.2,
         aztecs-glfw >=0.2 && <0.3,
         mtl,
@@ -58,5 +58,5 @@ executable window
     ghc-options:      -Wall
     build-depends:
         base,
-        aztecs >=0.17 && <0.18,
+        aztecs >=0.17.1 && <0.18,
         aztecs-glfw >=0.2 && <0.3
