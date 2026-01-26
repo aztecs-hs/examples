@@ -13,4 +13,10 @@ Examples can be run with `cabal run {example}`, for instance `cabal run ecs`
 - [`lifecycle`](https://github.com/aztecs-hs/examples/blob/main/src/Lifecycle.hs): ECS component lifecycles
 - [`observers`](https://github.com/aztecs-hs/examples/blob/main/src/Observers.hs): ECS observers on entities and events
 - [`pong`](https://github.com/aztecs-hs/examples/blob/main/src/Pong.hs): Full pong game implementation
+- [`sprite`](https://github.com/aztecs-hs/examples/blob/main/src/Sprite.hs): Sprite rendering
+- [`spritesheet`](https://github.com/aztecs-hs/examples/blob/main/src/Sprite.hs): Animated sprite sheet rendering
 - [`window`](https://github.com/aztecs-hs/examples/blob/main/src/Window.hs): GLFW window example
+
+## Assets
+
+- `IDLE.png`: [Samurai](https://xzany.itch.io/samurai-2d-pixel-art) by mattz_21

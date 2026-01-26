@@ -34,6 +34,18 @@ executable sprite
         aztecs-gl >=0.1 && <0.2,
         aztecs-glfw >=0.2 && <0.3
 
+executable spritesheet
+    main-is:          src/SpriteSheet.hs
+    default-language: Haskell2010
+    ghc-options:      -Wall
+    build-depends:
+        base,
+        aztecs >=0.17.1 && <0.18,
+        aztecs-gl >=0.1 && <0.2,
+        aztecs-glfw >=0.2 && <0.3,
+        mtl,
+        time
+
 executable lifecycle
     main-is:          src/Lifecycle.hs
     default-language: Haskell2010
