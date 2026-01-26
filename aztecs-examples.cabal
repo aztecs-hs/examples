@@ -12,28 +12,23 @@ executable ecs
     ghc-options:      -Wall
     build-depends:
         base,
-        aztecs,
-        deepseq >=1
+        aztecs >=0.16 && <0.17
 
-executable keyboard
-    main-is:          Keyboard.hs
+executable lifecycle
+    main-is:          Lifecycle.hs
     default-language: Haskell2010
     ghc-options:      -Wall
     build-depends:
         base,
-        aztecs,
-        aztecs-sdl,
-        sdl2
+        aztecs >=0.16 && <0.17
 
-executable mouse
-    main-is:          Mouse.hs
+executable observers
+    main-is:          Observers.hs
     default-language: Haskell2010
     ghc-options:      -Wall
     build-depends:
         base,
-        aztecs,
-        aztecs-sdl,
-        sdl2
+        aztecs >=0.16 && <0.17
 
 executable window
     main-is:          Window.hs
@@ -41,39 +36,5 @@ executable window
     ghc-options:      -Wall
     build-depends:
         base,
-        aztecs,
-        aztecs-sdl,
-        sdl2
-
-executable image
-    main-is:          Image.hs
-    default-language: Haskell2010
-    ghc-options:      -Wall
-    build-depends:
-        base,
-        aztecs,
-        aztecs-sdl,
-        aztecs-sdl-image,
-        sdl2
-
-executable sprite
-    main-is:          Sprite.hs
-    default-language: Haskell2010
-    ghc-options:      -Wall
-    build-depends:
-        base,
-        aztecs,
-        aztecs-sdl,
-        aztecs-sdl-image,
-        sdl2
-
-executable text
-    main-is:          Text.hs
-    default-language: Haskell2010
-    ghc-options:      -Wall
-    build-depends:
-        base,
-        aztecs,
-        aztecs-sdl,
-        aztecs-sdl-text,
-        sdl2
+        aztecs >=0.16 && <0.17,
+        aztecs-glfw >=0.1 && <0.2

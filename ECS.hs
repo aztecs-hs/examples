@@ -1,39 +1,30 @@
-{-# LANGUAGE Arrows #-}
-{-# LANGUAGE DeriveGeneric #-}
-{-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE TypeFamilies #-}
 
 module Main where
 
-import Aztecs
-import qualified Aztecs.ECS.Access as A
-import qualified Aztecs.ECS.Query as Q
-import qualified Aztecs.ECS.System as S
-import Control.Arrow ((>>>))
-import Control.DeepSeq
-import GHC.Generics (Generic)
+import Aztecs.ECS
+import Control.Monad.IO.Class
 
-newtype Position = Position Int deriving (Show, Generic, NFData)
+newtype Position = Position Int deriving (Show)
 
-instance Component Position
+instance (Monad m) => Component m Position
 
-newtype Velocity = Velocity Int deriving (Show, Generic, NFData)
+newtype Velocity = Velocity Int deriving (Show)
 
-instance Component Velocity
+instance (Monad m) => Component m Velocity
 
-setup :: (ArrowQueueSystem b m arr) => arr () ()
-setup = S.queue . const . A.spawn_ $ bundle (Position 0) <> bundle (Velocity 1)
+move :: (Monad m) => Query m Position
+move = queryMapWith go query
+  where
+    go (Velocity v) (Position p) = Position $ p + v
 
-move :: (ArrowQuery q, ArrowSystem q arr) => arr () [Position]
-move =
-  S.map
-    ( proc () -> do
-        Velocity v <- Q.fetch -< ()
-        Position p <- Q.fetch -< ()
-        Q.set -< Position $ p + v
-    )
-
-app :: Schedule IO () ()
-app = system setup >>> forever (system move) print
+app :: Access IO ()
+app = do
+  spawn_ $ bundle (Position 0) <> bundle (Velocity 1)
+  positions <- system $ runQuery move
+  liftIO $ print positions
 
 main :: IO ()
-main = runSchedule_ app
+main = runAccess_ app
