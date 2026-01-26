@@ -26,7 +26,7 @@ main = runAccess_ $ do
     spawn $
       bundle (Rectangle 100 80)
         <> bundle (transform2d {transformTranslation = V2 200 150} :: Transform2D)
-        <> bundle (Color 1 0 0 1)
+        <> bundle (color 1 0 0 1)
         <> bundle (Parent windowEntity)
 
   -- Spawn a green circle
@@ -34,7 +34,7 @@ main = runAccess_ $ do
     spawn $
       bundle (Circle 50 32)
         <> bundle (transform2d {transformTranslation = V2 400 300} :: Transform2D)
-        <> bundle (Color 0 1 0 1)
+        <> bundle (color 0 1 0 1)
         <> bundle (Parent windowEntity)
 
   -- Spawn a blue triangle
@@ -42,7 +42,7 @@ main = runAccess_ $ do
     spawn $
       bundle (Triangle (-40) 40 40 40 0 (-40))
         <> bundle (transform2d {transformTranslation = V2 600 200} :: Transform2D)
-        <> bundle (Color 0 0 1 1)
+        <> bundle (color 0 0 1 1)
         <> bundle (Parent windowEntity)
 
   -- Spawn a yellow rectangle (rotated)
@@ -50,7 +50,7 @@ main = runAccess_ $ do
     spawn $
       bundle (Rectangle 60 60)
         <> bundle (transform2d {transformTranslation = V2 300 450, transformRotation = 45} :: Transform2D)
-        <> bundle (Color 1 1 0 1)
+        <> bundle (color 1 1 0 1)
         <> bundle (Parent windowEntity)
 
   -- Spawn a magenta circle (scaled)
@@ -58,7 +58,7 @@ main = runAccess_ $ do
     spawn $
       bundle (Circle 30 24)
         <> bundle (transform2d {transformTranslation = V2 550 450, transformScale = V2 1.5 1.5} :: Transform2D)
-        <> bundle (Color 1 0 1 1)
+        <> bundle (color 1 0 1 1)
         <> bundle (Parent windowEntity)
 
   runAccessGLFW $ do

@@ -1,0 +1,3 @@
+* text=auto
+*.hs text eol=lf
+*.jpg binary

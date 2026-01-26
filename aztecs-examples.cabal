@@ -22,7 +22,17 @@ executable ecs
     ghc-options:      -Wall
     build-depends:
         base,
-        aztecs >=0.17 && <0.18
+        aztecs >=0.17.1 && <0.18
+
+executable sprite
+    main-is:          src/Sprite.hs
+    default-language: Haskell2010
+    ghc-options:      -Wall
+    build-depends:
+        base,
+        aztecs >=0.17.1 && <0.18,
+        aztecs-gl >=0.1 && <0.2,
+        aztecs-glfw >=0.2 && <0.3
 
 executable lifecycle
     main-is:          src/Lifecycle.hs
@@ -30,7 +40,7 @@ executable lifecycle
     ghc-options:      -Wall
     build-depends:
         base,
-        aztecs >=0.17 && <0.18
+        aztecs >=0.17.1 && <0.18
 
 executable observers
     main-is:          src/Observers.hs
@@ -38,7 +48,7 @@ executable observers
     ghc-options:      -Wall
     build-depends:
         base,
-        aztecs >=0.17 && <0.18
+        aztecs >=0.17.1 && <0.18
 
 executable pong
     main-is:          src/Pong.hs

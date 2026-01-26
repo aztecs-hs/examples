@@ -82,7 +82,7 @@ setupAndRun = do
     spawn $
       bundle (Rectangle 4 (fromIntegral windowH))
         <> bundle (transform2d {transformTranslation = V2 (round centerX) (round centerY)} :: Transform2D)
-        <> bundle (Color 0.2 0.2 0.2 1)
+        <> bundle (color 0.2 0.2 0.2 1)
         <> bundle (Parent windowEntity)
 
   -- Spawn paddles
@@ -90,7 +90,7 @@ setupAndRun = do
         spawn $
           bundle (Rectangle paddleW paddleH)
             <> bundle (transform2d {transformTranslation = pos} :: Transform2D)
-            <> bundle (Color 1 1 1 1)
+            <> bundle (color 1 1 1 1)
             <> bundle (Parent windowEntity)
             <> bundle (Paddle 0)
 
@@ -102,7 +102,7 @@ setupAndRun = do
     spawn $
       bundle (Circle ballR 16)
         <> bundle (transform2d {transformTranslation = V2 (round centerX) (round centerY)} :: Transform2D)
-        <> bundle (Color 1 1 0 1)
+        <> bundle (color 1 1 0 1)
         <> bundle (Parent windowEntity)
         <> bundle (Ball ballInitSpeedX ballInitSpeedY)
 
