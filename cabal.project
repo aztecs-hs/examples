@@ -1,6 +1,0 @@
-packages:
-  .
-  ../aztecs
-  ../aztecs-gl
-  ../aztecs-glfw
-  ../aztecs-transform

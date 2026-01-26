@@ -12,9 +12,9 @@ executable 2D
     ghc-options:      -Wall
     build-depends:
         base,
-        aztecs >=0.16 && <0.17,
+        aztecs >=0.17 && <0.18,
         aztecs-gl >=0.1 && <0.2,
-        aztecs-glfw >=0.1 && <0.2,
+        aztecs-glfw >=0.2 && <0.3
 
 executable ecs
     main-is:          src/ECS.hs
@@ -22,7 +22,7 @@ executable ecs
     ghc-options:      -Wall
     build-depends:
         base,
-        aztecs >=0.16 && <0.17
+        aztecs >=0.17 && <0.18
 
 executable lifecycle
     main-is:          src/Lifecycle.hs
@@ -30,7 +30,7 @@ executable lifecycle
     ghc-options:      -Wall
     build-depends:
         base,
-        aztecs >=0.16 && <0.17
+        aztecs >=0.17 && <0.18
 
 executable observers
     main-is:          src/Observers.hs
@@ -38,7 +38,7 @@ executable observers
     ghc-options:      -Wall
     build-depends:
         base,
-        aztecs >=0.16 && <0.17
+        aztecs >=0.17 && <0.18
 
 executable pong
     main-is:          src/Pong.hs
@@ -46,9 +46,9 @@ executable pong
     ghc-options:      -Wall
     build-depends:
         base,
-        aztecs >=0.16 && <0.17,
+        aztecs >=0.17 && <0.18,
         aztecs-gl >=0.1 && <0.2,
-        aztecs-glfw >=0.1 && <0.2,
+        aztecs-glfw >=0.2 && <0.3,
         mtl,
         time
 
@@ -58,5 +58,5 @@ executable window
     ghc-options:      -Wall
     build-depends:
         base,
-        aztecs >=0.16 && <0.17,
-        aztecs-glfw >=0.1 && <0.2
+        aztecs >=0.17 && <0.18,
+        aztecs-glfw >=0.2 && <0.3
