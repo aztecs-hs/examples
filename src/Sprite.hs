@@ -3,7 +3,7 @@
 module Main where
 
 import Aztecs
-import Aztecs.GL
+import Aztecs.GL.D2
 import Aztecs.GLFW
 import Control.Monad.IO.Class
 import System.IO
@@ -20,6 +20,7 @@ main = runAccess_ $ do
           windowHeight = 600
         }
 
+  -- Spawn a sprite
   img <- liftIO $ loadImage "assets/logo.jpg"
   imgEntity <- spawn $ bundle img
   _ <-
@@ -28,6 +29,7 @@ main = runAccess_ $ do
         <> bundle (transform2d {transformTranslation = V2 200 150} :: Transform2D)
         <> bundle (Parent windowEntity)
 
+  -- Run
   runAccessGLFW $ do
     render
     mKeys <- lookup @_ @Keys windowEntity

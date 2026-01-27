@@ -1,4 +1,6 @@
 * text=auto
 *.hs text eol=lf
+*.txt text eol=lf
 *.jpg binary
 *.png binary
+*.ttf binary

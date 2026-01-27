@@ -21,11 +21,11 @@ run = do
 
   -- Spawn observers that react to lifecycle events on the player's Health component
   _ <- spawn . bundle . observer @IO @(OnInsert Health) player $ \e (OnInsert h) ->
-    observe "insert" e h
-  _ <- spawn . bundle . observer @IO @(OnChange Health) player $ \e change ->
-    liftIO . putStrLn $ "change " ++ show e ++ ": old=" ++ show (onChangeOld change) ++ ", new=" ++ show (onChangeNew change)
+    go "insert" e h
+  _ <- spawn . bundle . observer @IO @(OnChange Health) player $ \e (OnChange _ new) ->
+    go "change" e new
   _ <- spawn . bundle . observer @IO @(OnRemove Health) player $ \e (OnRemove h) ->
-    observe "remove" e h
+    go "remove" e h
 
   -- Trigger events by inserting, changing, and removing the Health component
   _ <- insert player . bundle $ Health 150
@@ -34,7 +34,7 @@ run = do
 
   return ()
   where
-    observe s e h = liftIO . putStrLn $ s ++ " " ++ show e ++ ": " ++ show h
+    go s e h = liftIO . putStrLn $ s ++ " " ++ show e ++ ": " ++ show h
 
 main :: IO ()
 main = runAccess_ run

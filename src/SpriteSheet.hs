@@ -5,7 +5,7 @@
 module Main where
 
 import Aztecs
-import Aztecs.GL
+import Aztecs.GL.D2
 import Aztecs.GLFW
 import Control.Monad.IO.Class
 import Control.Monad.State.Strict
@@ -13,20 +13,24 @@ import Data.Time.Clock
 import System.IO
 import Prelude hiding (lookup)
 
+-- Game state
 data GameState = GameState
-  { gsLastTime :: !UTCTime,
-    gsAccum :: !Float
+  { lastTime :: !UTCTime,
+    elapsedTime :: !Float
   }
   deriving (Show)
 
-type AnimM = StateT GameState IO
+-- Game monad
+type GameM = StateT GameState IO
 
+-- Animated component
 data Animated = Animated {animatedFrame :: Int, animatedFrameCount :: Int}
   deriving (Show)
 
 instance (Monad m) => Component m Animated
 
-animate :: Access AnimM ()
+-- Animate all animated sprites
+animate :: Access GameM ()
 animate = do
   _ <- system . runQuery . queryMapWith go' $ queryMap go
   return ()
@@ -39,10 +43,11 @@ animate = do
 main :: IO ()
 main = do
   now <- getCurrentTime
-  evalStateT (runAccess_ setupAndRun) GameState {gsLastTime = now, gsAccum = 0}
+  evalStateT (runAccess_ run) GameState {lastTime = now, elapsedTime = 0}
 
-setupAndRun :: Access AnimM ()
-setupAndRun = do
+run :: Access GameM ()
+run = do
+  -- Create the window
   windowEntity <-
     spawn . bundle $
       Window
@@ -51,6 +56,7 @@ setupAndRun = do
           windowHeight = 600
         }
 
+  -- Spawn an animated sprite
   img <- liftIO $ loadImage "assets/IDLE.png"
   imgEntity <- spawn $ bundle img
   _ <-
@@ -67,26 +73,30 @@ setupAndRun = do
         <> bundle (transform2d {transformScale = V2 5 5, transformTranslation = V2 200 150} :: Transform2D)
         <> bundle (Parent windowEntity)
 
-  runAccessGLFW $ run windowEntity
+  -- Run
+  runAccessGLFW $ loop windowEntity
 
-run :: EntityID -> Access AnimM Bool
-run windowEntity = do
+loop :: EntityID -> Access GameM Bool
+loop windowEntity = do
+  -- Calculate elapsed time
   now <- liftIO getCurrentTime
-  lastTime <- lift $ gets gsLastTime
-  let dt = realToFrac (diffUTCTime now lastTime) :: Float
-  lift . modify' $ \s -> s {gsLastTime = now}
+  lt <- lift $ gets lastTime
+  let dt = realToFrac (diffUTCTime now lt) :: Float
+  lift . modify' $ \s -> s {lastTime = now}
 
-  accum <- lift $ gets gsAccum
+  -- Animate
+  accum <- lift $ gets elapsedTime
   let frameDuration = 0.1
       newAccum = accum + dt
   if newAccum >= frameDuration
     then do
-      lift . modify' $ \s -> s {gsAccum = newAccum - frameDuration}
+      lift . modify' $ \s -> s {elapsedTime = newAccum - frameDuration}
       animate
-    else lift . modify' $ \s -> s {gsAccum = newAccum}
+    else lift . modify' $ \s -> s {elapsedTime = newAccum}
 
   render
 
+  -- Check for exit
   mKeys <- lookup @_ @Keys windowEntity
   case mKeys of
     Just keys ->

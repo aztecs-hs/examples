@@ -6,14 +6,16 @@
 module Main where
 
 import Aztecs
-import Aztecs.GL
+import Aztecs.GL.D2
+import Aztecs.GL.Text
 import Aztecs.GLFW
 import Control.Monad
 import Control.Monad.IO.Class
 import Control.Monad.State.Strict
 import Data.Time.Clock
-import System.IO
 import Prelude hiding (lookup)
+
+-- Configuration options
 
 windowW, windowH :: Int
 windowW = 800
@@ -36,9 +38,10 @@ ballInitSpeedY = 200
 paddleMargin :: Float
 paddleMargin = 40
 
-newtype GameState = GameState {gsLastTime :: UTCTime}
-  deriving (Show)
+-- Current game state
+newtype GameState = GameState {lastTime :: UTCTime}
 
+-- Game monad
 type GameM = StateT GameState IO
 
 -- Paddle component
@@ -58,12 +61,12 @@ instance (Monad m) => Component m Ball
 main :: IO ()
 main = do
   now <- getCurrentTime
-  let initialState = GameState {gsLastTime = now}
-  (_, _) <- runStateT (runAccess_ setupAndRun) initialState
+  let initialState = GameState {lastTime = now}
+  (_, _) <- runStateT (runAccess_ run) initialState
   putStrLn "Game ended!"
 
-setupAndRun :: Access GameM ()
-setupAndRun = do
+run :: Access GameM ()
+run = do
   -- Spawn the window
   windowEntity <-
     spawn $
@@ -106,26 +109,59 @@ setupAndRun = do
         <> bundle (Parent windowEntity)
         <> bundle (Ball ballInitSpeedX ballInitSpeedY)
 
+  -- Spawn font and score labels
+  font <- spawn . bundle $ Font "assets/Montserrat-VariableFont_wght.ttf"
+
+  leftScoreLabelE <-
+    spawn $
+      bundle (Label "0" font defaultLabelStyle {labelFontSize = 48, labelColor = V4 1 1 1 1})
+        <> bundle (transform2d {transformTranslation = V2 (round (centerX - 60)) (round (fromIntegral windowH - 50 :: Float))} :: Transform2D)
+        <> bundle (Parent windowEntity)
+
+  rightScoreLabelE <-
+    spawn $
+      bundle (Label "0" font defaultLabelStyle {labelFontSize = 48, labelColor = V4 1 1 1 1})
+        <> bundle (transform2d {transformTranslation = V2 (round (centerX + 40)) (round (fromIntegral windowH - 50 :: Float))} :: Transform2D)
+        <> bundle (Parent windowEntity)
+
   -- Run the game loop
-  runAccessGLFW $ run windowEntity leftPaddleE rightPaddleE ballE
+  let rs =
+        Loop
+          { window = windowEntity,
+            leftPaddle = leftPaddleE,
+            rightPaddle = rightPaddleE,
+            ball = ballE,
+            leftScoreLabel = leftScoreLabelE,
+            rightScoreLabel = rightScoreLabelE
+          }
+  runAccessGLFW $ loop rs
 
-run :: EntityID -> EntityID -> EntityID -> EntityID -> Access GameM Bool
-run windowE leftE rightE ballE = do
+data Loop = Loop
+  { window :: EntityID,
+    leftPaddle :: EntityID,
+    rightPaddle :: EntityID,
+    ball :: EntityID,
+    leftScoreLabel :: EntityID,
+    rightScoreLabel :: EntityID
+  }
+
+loop :: Loop -> Access GameM Bool
+loop rs = do
   now <- liftIO getCurrentTime
-  lastTime <- lift $ gets gsLastTime
-  let dt = realToFrac (diffUTCTime now lastTime) :: Float
+  lt <- lift $ gets lastTime
+  let dt = realToFrac (diffUTCTime now lt) :: Float
       dt' = min dt 0.1
-  lift . modify' $ \gs -> gs {gsLastTime = now}
+  lift . modify' $ \gs -> gs {lastTime = now}
 
-  mKeys <- lookup @_ @Keys windowE
+  mKeys <- lookup @_ @Keys (window rs)
   case mKeys of
     Just keys -> do
       if keyJustPressed Key'Escape keys
         then return True
         else do
-          updatePaddle leftE keys Key'W Key'S dt'
-          updatePaddle rightE keys Key'Up Key'Down dt'
-          updateBall dt' ballE leftE rightE
+          updatePaddle (leftPaddle rs) keys Key'W Key'S dt'
+          updatePaddle (rightPaddle rs) keys Key'Up Key'Down dt'
+          updateBall dt' rs
           render
           return False
     Nothing -> do
@@ -149,18 +185,21 @@ updatePaddle paddleE keys upKey downKey dt = do
         $ bundle (t {transformTranslation = V2 x (round newY)} :: Transform2D)
     Nothing -> return ()
 
-updateBall :: Float -> EntityID -> EntityID -> EntityID -> Access GameM ()
-updateBall dt ballE leftE rightE = do
+updateBall :: Float -> Loop -> Access GameM ()
+updateBall dt rs = do
+  let ballE = ball rs
+      leftE = leftPaddle rs
+      rightE = rightPaddle rs
   mBallT <- lookup @_ @Transform2D ballE
   mBall <- lookup @_ @Ball ballE
   mLeftT <- lookup @_ @Transform2D leftE
   mRightT <- lookup @_ @Transform2D rightE
 
   case (mBallT, mBall, mLeftT, mRightT) of
-    (Just ballT, Just ball, Just leftT, Just rightT) -> do
+    (Just ballT, Just ball', Just leftT, Just rightT) -> do
       -- Get current velocity from Ball component
-      let velX = ballVelX ball
-          velY = ballVelY ball
+      let velX = ballVelX ball'
+          velY = ballVelY ball'
 
       let V2 bx by = transformTranslation ballT
           V2 _ ly = transformTranslation leftT
@@ -210,24 +249,26 @@ updateBall dt ballE leftE rightE = do
                   then (Nothing, rightPaddleX - paddleW / 2 - ballR, clampedBy, -(abs velX))
                   else
                     if newBx + ballR < 0
-                      then do
-                        (Just (rightE, "Right"), centerX, centerY, ballInitSpeedX)
+                      then (Just (rightE, False), centerX, centerY, ballInitSpeedX)
                       else
                         if newBx - ballR > fromIntegral windowW
-                          then (Just (leftE, "Left"), centerX, centerY, -ballInitSpeedX)
+                          then (Just (leftE, True), centerX, centerY, -ballInitSpeedX)
                           else (Nothing, newBx, clampedBy, velX)
 
       -- Scoring
       case res of
-        Just (e, s) -> do
+        Just (e, isLeft) -> do
           mPaddle <- lookup @_ @Paddle e
           let !score = case mPaddle of
                 Just p -> paddleScore p + 1
                 Nothing -> 1
           insert e . bundle $ Paddle score
-          liftIO $ do
-            putStrLn $ s ++ " scores! Score: " ++ show score
-            hFlush stdout
+          -- Update the appropriate score label
+          let labelE = if isLeft then leftScoreLabel rs else rightScoreLabel rs
+          mLabel <- lookup @_ @Label labelE
+          case mLabel of
+            Just lbl -> insert labelE . bundle $ lbl {labelText = show score}
+            Nothing -> return ()
         Nothing -> return ()
 
       -- Update ball transform and velocity

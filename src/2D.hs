@@ -3,7 +3,7 @@
 module Main where
 
 import Aztecs
-import Aztecs.GL
+import Aztecs.GL.D2
 import Aztecs.GLFW
 import Control.Monad.IO.Class
 import System.IO
@@ -61,6 +61,7 @@ main = runAccess_ $ do
         <> bundle (color 1 0 1 1)
         <> bundle (Parent windowEntity)
 
+  -- Run
   runAccessGLFW $ do
     render
     mKeys <- lookup @_ @Keys windowEntity

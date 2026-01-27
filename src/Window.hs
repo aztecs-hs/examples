@@ -8,6 +8,7 @@ import Prelude hiding (lookup)
 
 main :: IO ()
 main = runAccess_ $ do
+  -- Create the window
   e <-
     spawn $
       bundle $
@@ -16,6 +17,8 @@ main = runAccess_ $ do
             windowWidth = 800,
             windowHeight = 600
           }
+
+  -- Run
   runAccessGLFW $ do
     res <- lookup e
     case res of
